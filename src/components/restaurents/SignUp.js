@@ -109,7 +109,7 @@ function SignUp() {
                             <input
                                 type="password"
                                 placeholder="Enter password"
-                                {...register("password", { required: "Password is required", minLength: { value: 6, message: "Minimum 6 characters" } })}
+                                {...register("password")}
                                 className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#E94E1B]"
                             />
                             {errors.password && <p className="text-xs text-red-500 mt-1">{errors.password.message}</p>}
@@ -119,10 +119,7 @@ function SignUp() {
                             <input
                                 type="password"
                                 placeholder="Confirm password"
-                                {...register("confirmPassword", {
-                                    required: "Confirm your password",
-                                    validate: (value) => value === password || "Passwords do not match",
-                                })}
+                                {...register("confirmPassword")}
                                 className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#E94E1B]"
                             />
                             {errors.confirmPassword && <p className="text-xs text-red-500 mt-1">{errors.confirmPassword.message}</p>}
