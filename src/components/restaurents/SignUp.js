@@ -1,15 +1,42 @@
 "use client"
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import Image from 'next/image';
 import Link from 'next/link';
+import baseUrl from '@/service/axiosInstance';
+import { yupResolver } from "@hookform/resolvers/yup"
+import signupValidation from '@/schemas/restaurant/signUpValidation';
+import { useRouter } from 'next/navigation';
 
 function SignUp() {
+    const router=useRouter();
 
-    const { register, reset, handleSubmit, formState: { errors } } = useForm();
+    const { register, reset, handleSubmit, formState: { errors } } = useForm({ resolver: yupResolver(signupValidation) });
 
-    const onSubmit = (data) => {
-        console.log("Restaurent data", data)
+    const [loggedIn, setIsLoggedin] = useState(false);
+    useEffect(() => {
+        const token = sessionStorage.getItem("accessToken")
+        if (token) {
+            setIsLoggedin(true);
+        }
+    }, [])
+
+    if (loggedIn) {
+        router.push("/restaurant/dashboard");
+        return;
+    }
+
+
+    const onSubmit = async (data) => {
+        const res = await baseUrl.post("/restaurant/signup", data);
+        console.log(data)
+        console.log(res.data.success);
+        console.log(res.data.message);
+
+        if (res?.data?.success) {
+            alert(res?.data?.message);
+        }
+        reset();
     }
 
     return (
@@ -55,30 +82,30 @@ function SignUp() {
                             <input
                                 type="text"
                                 placeholder="Enter restaurant owner name"
-                                {...register("restaurantOwnerName")}
+                                {...register("ownerName")}
                                 className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#E94E1B]"
                             />
-                            {errors.restaurantOwnerName && <p className="text-xs text-red-500 mt-1">{errors.restaurantOwnerName.message}</p>}
+                            {errors.ownerName && <p className="text-xs text-red-500 mt-1">{errors.ownerName.message}</p>}
                         </div>
 
                         <div>
                             <input
                                 type="email"
                                 placeholder="Enter restaurant e-mail"
-                                {...register("restaurantEmail")}
+                                {...register("email")}
                                 className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#E94E1B]"
                             />
-                            {errors.restaurantEmail && <p className="text-xs text-red-500 mt-1">{errors.restaurantEmail.message}</p>}
+                            {errors.email && <p className="text-xs text-red-500 mt-1">{errors.email.message}</p>}
                         </div>
 
                         <div>
                             <input
                                 type="text"
                                 placeholder="Enter restaurant contact number"
-                                {...register("restaurantContact")}
+                                {...register("contactNumber")}
                                 className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#E94E1B]"
                             />
-                            {errors.restaurantContact && <p className="text-xs text-red-500 mt-1">{errors.restaurantContact.message}</p>}
+                            {errors.contactNumber && <p className="text-xs text-red-500 mt-1">{errors.contactNumber.message}</p>}
                         </div>
 
                         <div>
@@ -86,7 +113,7 @@ function SignUp() {
                                 {...register("city")}
                                 className="w-full border border-gray-300 rounded-lg p-3 bg-white focus:outline-none focus:ring-2 focus:ring-[#E94E1B]"
                             >
-                                <option value="">Select city</option>
+                                <option value="" disabled>Select city</option>
                                 <option value="Delhi">Delhi</option>
                                 <option value="Mumbai">Mumbai</option>
                                 <option value="Kolkata">Kolkata</option>
@@ -139,7 +166,7 @@ function SignUp() {
                     </p>
                     <p className="text-center text-sm text-gray-500 mt-4">
                         Already have an account?{" "}
-                        <Link href="/restaurent/login" className="text-[#E94E1B] font-medium hover:underline">Login</Link>
+                        <Link href="/restaurant/login" className="text-[#E94E1B] font-medium hover:underline">Login</Link>
                     </p>
                 </div>
             </div>

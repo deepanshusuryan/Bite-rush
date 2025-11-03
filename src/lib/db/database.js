@@ -1,14 +1,33 @@
 import mongoose from "mongoose";
 
-const db_password=process.env.DB_PASSWORD
-const db_uri=`mongodb+srv://Deepanshu:${db_password}@bite-rush.ysbplq6.mongodb.net/?appName=bite-rush`
+const DB_PASSWORD=process.env.DB_PASSWORD;
+const DB_USERNAME=process.env.DB_USERNAME;
+const restaurant_db_uri=`mongodb+srv://${DB_USERNAME}:${DB_PASSWORD}@bite-rush.ysbplq6.mongodb.net/restaurant?appName=bite-rush`
+const user_db_uri=`mongodb+srv://${DB_USERNAME}:${DB_PASSWORD}@bite-rush.ysbplq6.mongodb.net/users?appName=bite-rush`
+const delivery_db_uri=`mongodb+srv://${DB_USERNAME}:${DB_PASSWORD}@bite-rush.ysbplq6.mongodb.net/delivery?appName=bite-rush`
 
-const databaseConnection=async()=>{
+export const restaurantDbConnection=async()=>{
     try {
-        await mongoose.connect(db_uri);
+        await mongoose.connect(restaurant_db_uri,{useNewUrlParser:true});
         console.log("Database Connected successfully");
     } catch (error) {
         console.log("Error while connecting Database",error)
     }
 }
-export default databaseConnection;
+
+export const userDbConnection=async()=>{
+    try {
+        await mongoose.connect(user_db_uri,{useNewUrlParser:true});
+        console.log("Database Connected successfully");
+    } catch (error) {
+        console.log("Error while connecting Database",error)
+    }
+}
+export const deliveryDbConnection=async()=>{
+    try {
+        await mongoose.connect(delivery_db_uri,{useNewUrlParser:true});
+        console.log("Database Connected successfully");
+    } catch (error) {
+        console.log("Error while connecting Database",error)
+    }
+}
