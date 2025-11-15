@@ -1,17 +1,17 @@
 import { restaurantDbConnection } from "@/lib/db/database";
 import { NextResponse } from "next/server";
-import { restaurantSignUp } from "@/models/restaurant/restaurentSignUpModel";
+import { Restaurant } from "@/models/restaurant/restaurentSignUpModel";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
-const JWT_ACCESS_SECRET = process.env.JWT_ACCESS_SECRET;
+await restaurantDbConnection();
+const JWT_ACCESS_SECRET=process.env.JWT_ACCESS_SECRET;
 
 export async function POST(req) {
   try {
     const body = await req.json();
-    const { email, password } = body ?? {};
+    const { email, password } = body;
 
-    // Basic validation
     if (!email || !password) {
       return NextResponse.json(
         { message: "Email and password are required", success: false },
@@ -19,20 +19,7 @@ export async function POST(req) {
       );
     }
 
-    // Ensure JWT secret present
-    if (!JWT_ACCESS_SECRET) {
-      console.error("Missing JWT_ACCESS_SECRET env var");
-      return NextResponse.json(
-        { message: "Server configuration error", success: false },
-        { status: 500 }
-      );
-    }
-
-    // Connect to DB
-    await restaurantDbConnection();
-
-    // Find user
-    const restaurant = await restaurantSignUp.findOne({ email: email.toLowerCase() });
+    const restaurant = await Restaurant.findOne({ email });
     if (!restaurant) {
       return NextResponse.json(
         { message: "User with this email doesn't exist", success: false },
@@ -40,7 +27,6 @@ export async function POST(req) {
       );
     }
 
-    // Compare password
     const validPassword = await bcrypt.compare(password, restaurant.password);
     if (!validPassword) {
       return NextResponse.json(
@@ -49,28 +35,29 @@ export async function POST(req) {
       );
     }
 
-    // Generate access token
-    const accessToken = jwt.sign(
-      { id: restaurant._id.toString(), email: restaurant.email },
+    const accessToken = jwt.sign({ id: restaurant._id, email: restaurant.email },
       JWT_ACCESS_SECRET,
-      { expiresIn: "1h" }
+      { expiresIn: "1d" }
     );
 
-    // return response (IMPORTANT: return the NextResponse)
-    return NextResponse.json(
+    const response= NextResponse.json(
       {
         message: "Login successful",
         success: true,
-        accessToken,
-        restaurant: {
-          email: restaurant.email,
-          name: restaurant.restaurantName,
-        },
+        // accessToken,
+        // restaurant: {
+        //   email: restaurant.email,
+        //   name: restaurant.restaurantName,
+        //   id:restaurant._id
+        // },
       },
       { status: 200 }
     );
+
+    response.cookies.set("accessToken", accessToken)
+
+    return response;
   } catch (error) {
-    // log full error server-side for debugging
     console.error("Login error:", error);
     return NextResponse.json(
       { message: error?.message || "Internal Server Error", success: false },

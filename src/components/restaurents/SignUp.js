@@ -13,30 +13,17 @@ function SignUp() {
 
     const { register, reset, handleSubmit, formState: { errors } } = useForm({ resolver: yupResolver(signupValidation) });
 
-    const [loggedIn, setIsLoggedin] = useState(false);
-    useEffect(() => {
-        const token = sessionStorage.getItem("accessToken")
-        if (token) {
-            setIsLoggedin(true);
-        }
-    }, [])
-
-    if (loggedIn) {
-        router.push("/restaurant/dashboard");
-        return;
-    }
-
-
     const onSubmit = async (data) => {
         const res = await baseUrl.post("/restaurant/signup", data);
         console.log(data)
         console.log(res.data.success);
         console.log(res.data.message);
 
-        if (res?.data?.success) {
+        if (res?.data?.success === true) {
             alert(res?.data?.message);
+            reset();
+            router.push("/restaurant/login");
         }
-        reset();
     }
 
     return (

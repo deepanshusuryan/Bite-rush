@@ -31,7 +31,19 @@ const signUpSchema=new mongoose.Schema({
     password:{
         type:String,
         required:true
-    }
+    },
+    isVerified:{
+        type:Boolean,
+        default:false
+    },
+    isAdmin:{
+        type:Boolean,
+        default:false
+    },
+    forgotPasswordToken: String,
+    forgotPasswordTokenExpiry: Date,
+    verifyToken: String,
+    verifyTokenExpiry: Date
 },{ timestamps:true })
 
 
@@ -50,6 +62,4 @@ signUpSchema.pre("save", async function(next) {
     }
 })
 
-
-
-export const restaurantSignUp= mongoose.models.signUpSchema || mongoose.model("signUpSchema", signUpSchema)
+export const Restaurant= mongoose.models.Restaurant || mongoose.model("Restaurant", signUpSchema)

@@ -54,16 +54,13 @@ export default function Footer() {
             Contact Us
           </h3>
           <div className="flex items-center space-x-3 mb-2">
-            <Image src="/footer-icons/location.png" alt="Location" width={20} height={20} />
-            <p className="text-gray-200 text-sm">New Delhi, India</p>
+            <p className="text-gray-200 text-sm">📍 New Delhi, India</p>
           </div>
           <div className="flex items-center space-x-3 mb-2">
-            <Image src="/footer-icons/phone.png" alt="Phone" width={20} height={20} />
-            <p className="text-gray-200 text-sm">+91 11111 00000</p>
+            <p className="text-gray-200 text-sm">📞 +91 11111 00000</p>
           </div>
           <div className="flex items-center space-x-3">
-            <Image src="/footer-icons/email.png" alt="Email" width={20} height={20} />
-            <p className="text-gray-200 text-sm">support@biterush.com</p>
+            <p className="text-gray-200 text-sm">✉️ support@biterush.com</p>
           </div>
         </div>
       </div>

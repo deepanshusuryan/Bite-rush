@@ -4,26 +4,32 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
+import Cookies from "js-cookie";
+import baseUrl from "@/service/axiosInstance";
+
 
 export default function Header() {
 
   const router = useRouter();
 
   const [IsLoggedin, setIsLoggedin] = useState(false);
-
   useEffect(() => {
-    const accessToken = sessionStorage.getItem("accessToken");
-    if (accessToken) {
+    const token = Cookies.get("accessToken");
+    if (token) {
       setIsLoggedin(true);
     }
-  }, []);
+  }, [])
 
-  const logout = () => {
-    sessionStorage.removeItem("accessToken");
-    alert("Logout successful");
-    router.refresh();
-    router.push("/restaurant/login");
-  }
+  const logout = async () => {
+    try {
+      await baseUrl.get("/restaurant/logout", { withCredentials: true });
+      Cookies.remove("accessToken", { path: "/" });
+      setIsLoggedin(false);
+      router.push("/restaurant/login");
+    } catch (err) {
+      console.error("Logout error:", err);
+    }
+  };
 
   return (
     <header className="w-full bg-[#fff9f5] shadow-md sticky top-0 z-50">
